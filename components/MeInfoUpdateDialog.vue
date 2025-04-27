@@ -70,15 +70,10 @@ const { open, meInfo } = defineProps<{
 const emit = defineEmits(["update:open"]);
 
 const { meMutation } = useMe();
-const router = useRouter();
 
 const meUpdateDTO = reactive<MeUpdateDTO>({
   birth_date: meInfo.birth_date,
   gender: meInfo.gender,
-});
-
-watchEffect(() => {
-  console.log(meUpdateDTO);
 });
 
 // 日期验证相关

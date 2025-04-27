@@ -70,8 +70,8 @@ const { meQuery } = useMe();
 const { logout } = useAuth();
 const { data: meData } = meQuery;
 
-const handleLogout = async () => {
-  await logout();
+const handleLogout = () => {
+  logout();
   window.location.href = "/login";
 };
 </script>
