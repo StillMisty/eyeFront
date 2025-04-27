@@ -1,11 +1,9 @@
 <script setup lang="ts"></script>
 
 <template>
-  <SidebarProvider>
-    <AppSidebar />
-    <main class="flex-1 relative">
-      <SidebarTrigger class="fixed cursor-pointer" />
+  <div>
+    <NuxtLayout>
       <NuxtPage />
-    </main>
-  </SidebarProvider>
+    </NuxtLayout>
+  </div>
 </template>
