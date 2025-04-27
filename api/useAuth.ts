@@ -6,46 +6,44 @@ import type { TokenDTO } from "~/types/DTO/TokenDTO";
 export function useAuth() {
   const apiUrl = useRuntimeConfig().public.apiUrl;
   const cookie = useCookie("auth-token", {
-    // 设置为 HTTP-only，提高安全性
-    httpOnly: true,
+    // httpOnly设置为false，因为客户端JavaScript需要读取它
+    httpOnly: false,
     // 设置 cookie 路径为根路径
     path: "/",
-    // 可根据需要设置有效期
+    // 根据需要设置有效期
     maxAge: 60 * 60 * 24 * 7, // 7天
     // 在生产环境中建议设置为 true
     secure: process.env.NODE_ENV === "production",
   });
 
-  const isAuthenticated = ref(!!cookie.value);
+  const isAuthenticated = computed(() => !!cookie.value);
 
   const register = async (registerDTO: RegisterDTO) => {
-    const response: TokenDTO = await $fetch(`${apiUrl}/api/v1/auth/register`, {
+    const res: TokenDTO = await $fetch(`${apiUrl}/api/v1/auth/register`, {
       method: "POST",
       body: registerDTO,
     });
 
-    // 保存 token 到 cookie
-    if (response.access_token) {
-      cookie.value = response.access_token;
-      isAuthenticated.value = true;
+    // 保存 jwt 到 cookie
+    if (res.token_type === "bearer" && res.access_token) {
+      cookie.value = res.access_token;
     }
 
-    return response;
+    return res;
   };
 
   const login = async (loginDTO: LoginDTO) => {
-    const response: TokenDTO = await $fetch(`${apiUrl}/api/v1/auth/login`, {
+    const res: TokenDTO = await $fetch(`${apiUrl}/api/v1/auth/login`, {
       method: "POST",
       body: loginDTO,
     });
 
-    // 保存 token 到 cookie
-    if (response.access_token) {
-      cookie.value = response.access_token;
-      isAuthenticated.value = true;
+    // 保存 jwt 到 cookie
+    if (res.token_type === "bearer" && res.access_token) {
+      cookie.value = res.access_token;
     }
 
-    return response;
+    return res;
   };
 
   // 获取 token 的辅助方法
