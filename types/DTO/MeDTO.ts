@@ -1,3 +1,5 @@
+import type { Gender } from "../Gender";
+
 export interface MeDTO {
   /**
    * Account
@@ -10,7 +12,7 @@ export interface MeDTO {
   /**
    * Gender
    */
-  gender: string;
+  gender: Gender;
   /**
    * Id
    */

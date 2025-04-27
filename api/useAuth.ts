@@ -46,6 +46,10 @@ export function useAuth() {
     return res;
   };
 
+  const logout = () => {
+    cookie.value = null;
+  };
+
   // 获取 token 的辅助方法
   const getToken = () => cookie.value;
 
@@ -77,6 +81,7 @@ export function useAuth() {
     isAuthenticated,
     loginMutation,
     registerMutation,
+    logout,
     getToken,
   };
 }
