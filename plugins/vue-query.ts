@@ -10,7 +10,7 @@ import {
   dehydrate,
 } from "@tanstack/vue-query";
 
-export default defineNuxtPlugin((nuxt) => {
+export default defineNuxtPlugin((nuxtApp) => {
   const vueQueryState = useState<DehydratedState | null>("vue-query");
 
   // Modify your Vue Query global settings here
@@ -19,15 +19,22 @@ export default defineNuxtPlugin((nuxt) => {
   });
   const options: VueQueryPluginOptions = { queryClient };
 
-  nuxt.vueApp.use(VueQueryPlugin, options);
+  nuxtApp.vueApp.use(VueQueryPlugin, options);
 
   if (import.meta.server) {
-    nuxt.hooks.hook("app:rendered", () => {
+    nuxtApp.hooks.hook("app:rendered", () => {
       vueQueryState.value = dehydrate(queryClient);
     });
   }
 
   if (import.meta.client) {
-    hydrate(queryClient, vueQueryState.value);
+    nuxtApp.nuxtState && hydrate(queryClient, vueQueryState.value);
   }
+
+  // 确保提供客户端实例
+  return {
+    provide: {
+      queryClient,
+    },
+  };
 });

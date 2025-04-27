@@ -1,4 +1,4 @@
-import type { Gender } from "~/types/DTO/Gender";
+import type { Gender } from "~/types/Gender";
 
 export interface RegisterDTO {
   account: string;
