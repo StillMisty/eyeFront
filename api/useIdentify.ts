@@ -131,15 +131,16 @@ export function useIdentify() {
    * 获取眼部识别建议
    */
   const identityEyeSuggestionQuery = (
-    identityEyeSuggestionRequest: IdentityEyeSuggestionRequest | undefined,
+    identityEyeSuggestionRequest: Ref<IdentityEyeSuggestionRequest>,
+    enabled: ComputedRef<boolean> = computed(
+      () => !!identityEyeSuggestionRequest.value,
+    ),
   ) =>
     useQuery({
       queryKey: ["identityEyeSuggestion", identityEyeSuggestionRequest],
       queryFn: () =>
-        postIdentityEyeSuggestion(
-          identityEyeSuggestionRequest as IdentityEyeSuggestionRequest,
-        ),
-      enabled: !!identityEyeSuggestionRequest,
+        postIdentityEyeSuggestion(identityEyeSuggestionRequest.value),
+      enabled,
     });
 
   const identifyEyeHistoryQuery = (pageRequest: Ref<PageRequest>) =>
@@ -169,6 +170,7 @@ export function useIdentify() {
     identifyEyeImageQuery,
     identityEyeSuggestionQuery,
     identifyEyeHistoryQuery,
+    postIdentityEyeSuggestion,
     deleteEyeHistoryMutation,
   };
 }

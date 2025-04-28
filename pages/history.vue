@@ -27,19 +27,12 @@
               formatDate(item.created_at)
             }}</TableCell>
             <TableCell class="text-center flex justify-center items-center">
-              <div v-if="imageUrls[item.id]" class="size-16 overflow-hidden">
-                <img
-                  :src="imageUrls[item.id]"
-                  class="size-full"
-                  alt="眼部图像"
-                />
-              </div>
-              <div
-                v-else
-                class="w-16 h-16 flex items-center justify-center bg-gray-100"
-              >
-                <p class="text-xs text-gray-500">加载中...</p>
-              </div>
+              <img
+                class="size-32"
+                v-if="item?.image_url"
+                :src="get_image_url(item.image_url)"
+                alt="眼部图像"
+              />
             </TableCell>
             <TableCell>
               <Button
@@ -129,6 +122,7 @@ import {
 import { useIdentify } from "~/api/useIdentify";
 import type { PageRequest } from "~/types/DTO/PageRequest";
 import { Order } from "~/types/Order";
+import get_image_url from "~/utils/get_image_url";
 
 definePageMeta({
   requiresAuth: true,
@@ -149,45 +143,6 @@ const historyPage: Ref<PageRequest> = ref({
 const { deleteEyeHistoryMutation, identifyEyeHistoryQuery } = useIdentify();
 const { data: historyData, isLoading: historyLoading } =
   identifyEyeHistoryQuery(historyPage);
-
-// 监听historyData变化，加载图片
-watch(
-  () => historyData.value?.items,
-  async (items) => {
-    if (items && items.length > 0) {
-      for (const item of items) {
-        await loadImage(String(item.id), item.image_url);
-      }
-    }
-  },
-  { immediate: true },
-);
-
-// 加载图片并创建Blob URL
-const loadImage = async (id: string, imageUrl: string) => {
-  if (!imageUrl) return;
-
-  try {
-    const config = useRuntimeConfig();
-    const fullUrl = `${config.public.apiUrl}${imageUrl}`;
-
-    const res: Blob = await $fetch(fullUrl, {
-      method: "GET",
-    });
-
-    const blobUrl = URL.createObjectURL(res);
-    imageUrls.value[id] = blobUrl;
-  } catch (e) {
-    console.error("处理图片时出错:", e);
-  }
-};
-
-// 组件卸载时清理Blob URLs
-onBeforeUnmount(() => {
-  Object.values(imageUrls.value).forEach((url) => {
-    URL.revokeObjectURL(url);
-  });
-});
 
 // 分页计算
 const currentPage = computed(

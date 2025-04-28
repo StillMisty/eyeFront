@@ -9,7 +9,11 @@
       </DialogHeader>
       <div class="flex gap-4">
         <div class="min-w-36 max-w-48">
-          <img v-if="imageUrl" :src="imageUrl" alt="眼部图像" />
+          <img
+            v-if="details?.image_url"
+            :src="get_image_url(details.image_url)"
+            alt="眼部图像"
+          />
           <Accordion type="single" collapsible>
             <AccordionItem
               v-for="result in details?.results"
@@ -36,7 +40,7 @@
             <p>建议正在火速赶来</p>
           </div>
           <div
-            v-if="suggestion"
+            v-else-if="suggestion"
             class="markdown-content"
             v-html="renderedSuggestion"
           ></div>
@@ -60,10 +64,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useQuery } from "@tanstack/vue-query";
 import { Loader } from "lucide-vue-next";
 import MarkdownIt from "markdown-it";
 import { useIdentify } from "~/api/useIdentify";
 import { useMe } from "~/api/useMe";
+import get_image_url from "~/utils/get_image_url";
 
 const md = new MarkdownIt();
 const { identification_id, open } = defineProps<{
@@ -74,44 +80,17 @@ const emit = defineEmits(["update:open"]);
 
 const {
   identifyEyeDetailQuery,
-  identifyEyeImageQuery,
   identityEyeSuggestionQuery,
+  postIdentityEyeSuggestion,
 } = useIdentify();
 
 const { meQuery } = useMe();
 
 const { data: details } = identifyEyeDetailQuery(identification_id);
-const { data: imageBlob } = identifyEyeImageQuery(identification_id);
-
-const imageUrl = ref<string | null>(null);
-
-// 当Blob数据加载后，创建对象URL
-watch(
-  () => imageBlob.value,
-  (newBlob) => {
-    if (newBlob) {
-      // 如果之前有创建过URL，先释放它以避免内存泄漏
-      if (imageUrl.value) {
-        URL.revokeObjectURL(imageUrl.value);
-      }
-
-      // 创建新的对象URL
-      imageUrl.value = URL.createObjectURL(newBlob);
-    }
-  },
-  { immediate: true },
-);
-
-// 组件卸载时释放URL资源
-onBeforeUnmount(() => {
-  if (imageUrl.value) {
-    URL.revokeObjectURL(imageUrl.value);
-    imageUrl.value = null;
-  }
-});
 
 const { data: me } = meQuery;
 
+// 获取眼疾识别建议
 const identityEyeSuggestionRequest = computed(() => {
   if (me.value && details.value) {
     return {
@@ -122,9 +101,8 @@ const identityEyeSuggestionRequest = computed(() => {
     };
   }
 });
-
 const { data: suggestion, isPending: suggestionIsPending } =
-  identityEyeSuggestionQuery(identityEyeSuggestionRequest.value);
+  identityEyeSuggestionQuery(identityEyeSuggestionRequest);
 
 // 使用 markdown-it 将 suggestion 内容渲染为 HTML
 const renderedSuggestion = computed(() => {
