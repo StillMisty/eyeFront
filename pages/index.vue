@@ -4,7 +4,7 @@
   >
     <div class="max-w-md w-full bg-white rounded-lg shadow-lg p-8 space-y-6">
       <div class="text-center">
-        <h1 class="text-2xl font-bold text-gray-800 mb-2">眼睛识别系统</h1>
+        <h1 class="text-2xl font-bold text-gray-800 mb-2">眼疾识别</h1>
         <p class="text-gray-500 mb-6">上传眼睛图片进行分析</p>
       </div>
 
@@ -43,12 +43,12 @@
             class="w-full h-auto rounded-lg object-cover max-h-64"
             alt="Eye image preview"
           />
-          <button
+          <Button
             @click="clearImage"
             class="absolute top-2 right-2 bg-black/50 text-white cursor-pointer rounded-full p-1 hover:bg-black/70"
           >
             <X />
-          </button>
+          </Button>
         </div>
 
         <Input

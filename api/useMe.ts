@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/vue-query";
+import { toast } from "vue-sonner";
 import { useAuth } from "~/api/useAuth";
 import type { MeDTO } from "~/types/DTO/MeDTO";
 import type { MeUpdateDTO } from "~/types/DTO/MeUpdateDTO";
@@ -33,6 +34,7 @@ export function useMe() {
       queryClient.invalidateQueries({
         queryKey: ["me"],
       });
+      toast("个人信息修改成功");
     },
   });
 

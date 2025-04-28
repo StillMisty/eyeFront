@@ -27,13 +27,21 @@
         <Label>性别</Label>
         <div class="flex gap-4 mt-1">
           <Label class="inline-flex items-center">
-            <RadioGroupItem name="gender" :value="Gender.Male" />
+            <RadioGroupItem
+              name="gender"
+              :value="Gender.Male"
+              class="cursor-pointer"
+            />
             <span class="ml-2 text-sm text-gray-700 dark:text-gray-300"
               >男性</span
             >
           </Label>
           <Label class="inline-flex items-center">
-            <RadioGroupItem name="gender" :value="Gender.Female" />
+            <RadioGroupItem
+              name="gender"
+              :value="Gender.Female"
+              class="cursor-pointer"
+            />
             <span class="ml-2 text-sm text-gray-700 dark:text-gray-300"
               >女性</span
             >
@@ -41,7 +49,7 @@
         </div>
       </RadioGroup>
       <DialogFooter>
-        <Button @click="handleUpdateMeInfo">保存</Button>
+        <Button @click="handleUpdateMeInfo" class="cursor-pointer">保存</Button>
       </DialogFooter>
     </DialogContent>
   </Dialog>

@@ -27,17 +27,23 @@
           <SidebarMenuButton as-child>
             <DropdownMenu>
               <DropdownMenuTrigger as-child>
-                <Button variant="ghost" class="w-full justify-start">
+                <Button
+                  variant="ghost"
+                  class="w-full justify-start cursor-pointer"
+                >
                   <User class="mr-2" />
                   {{ meData?.account || "用户" }}
                   <ChevronUp class="ml-auto" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem @click="isDialogOpen = true">
+                <DropdownMenuItem
+                  class="cursor-pointer"
+                  @click="isDialogOpen = true"
+                >
                   <span>个人信息</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem @click="handleLogout">
+                <DropdownMenuItem class="cursor-pointer" @click="handleLogout">
                   <span>退出账号</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
