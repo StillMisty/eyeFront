@@ -71,10 +71,9 @@
       </div>
 
       <!-- 按钮 -->
-      <div class="flex justify-center">
+      <div class="flex justify-center gap-4">
         <Button
           @click="handleIdentifyEye"
-          class="px-6 py-2 transition-all duration-200 w-full"
           :disabled="!hasFile || uploading"
           :class="{
             'opacity-50 cursor-not-allowed': !hasFile || uploading,
@@ -83,6 +82,12 @@
           <span v-if="uploading">处理中...</span>
           <span v-else>开始识别</span>
         </Button>
+        <Button
+          v-if="identification_id"
+          @click="handleShowResult"
+          class="cursor-pointer"
+          >查看结果</Button
+        >
       </div>
 
       <!-- 结果状态 -->
@@ -94,6 +99,11 @@
         {{ resultMessage }}
       </div>
     </div>
+    <IdentifyDetailsDialog
+      v-if="identification_id"
+      v-model:open="identification_open"
+      :identification_id="identification_id"
+    />
   </div>
 </template>
 
@@ -116,7 +126,10 @@ const resultStatus = ref<"success" | "error" | null>(null);
 const resultMessage = ref("");
 // 添加一个变量来存储当前选择的文件
 const currentFile = ref<File | null>(null);
-
+// 当前页面识别后返回的识别ID
+const identification_id = ref<number | null>(null);
+// 识别结果详细信息是否显示
+const identification_open = ref(false);
 const resultStatusClass = computed(() => {
   if (resultStatus.value === "success") {
     return "bg-green-50 text-green-700 border border-green-200";
@@ -206,8 +219,11 @@ const handleIdentifyEye = async () => {
     resultStatus.value = "success";
     resultMessage.value = "眼睛识别成功！";
 
-    // 可以根据实际返回处理更多逻辑
-    console.log(response);
+    // 将识别ID存储到变量中
+    identification_id.value = response.id;
+
+    // 打开识别结果详情对话框
+    identification_open.value = true;
   } catch (error) {
     clearInterval(progressInterval);
     console.error("Error during upload:", error);
@@ -218,6 +234,12 @@ const handleIdentifyEye = async () => {
     resultMessage.value = "识别过程中出错，请重试";
   } finally {
     uploading.value = false;
+  }
+};
+
+const handleShowResult = () => {
+  if (identification_id.value) {
+    identification_open.value = true;
   }
 };
 </script>
