@@ -27,9 +27,13 @@
             </AccordionItem>
           </Accordion>
         </div>
-        <div class="overflow-y-auto">
-          <div v-if="suggestionIsPending">
-            <Loader class="animate-spin" />
+        <div class="overflow-y-auto size-full">
+          <div
+            v-if="suggestionIsPending"
+            class="flex items-center justify-center flex-col gap-2 size-full"
+          >
+            <Loader class="animate-spin" :size="48" />
+            <p>建议正在火速赶来</p>
           </div>
           <div
             v-if="suggestion"
