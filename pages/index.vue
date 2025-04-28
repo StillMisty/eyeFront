@@ -100,9 +100,10 @@
       </div>
     </div>
     <IdentifyDetailsDialog
-      v-if="identification_id"
+      v-if="identification_open && identification_id"
       v-model:open="identification_open"
       :identification_id="identification_id"
+      :key="identification_id"
     />
   </div>
 </template>
