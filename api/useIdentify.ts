@@ -3,6 +3,8 @@ import { toast } from "vue-sonner";
 import type { EyeIdentificationResponse } from "~/types/DTO/EyeIdentificationResponse";
 import type { EyeIdentificationSuggestionResponse } from "~/types/DTO/EyeIdentificationSuggestionResponse";
 import type { IdentityEyeSuggestionRequest } from "~/types/DTO/IdentityEyeSuggestionRequest";
+import type { PageRequest } from "~/types/DTO/PageRequest";
+import type { PageResponse } from "~/types/DTO/PageResponse";
 
 export function useIdentify() {
   const apiUrl = useRuntimeConfig().public.apiUrl;
@@ -53,6 +55,18 @@ export function useIdentify() {
       {
         method: "POST",
         query: identityEyeSuggestionRequest,
+      },
+    );
+
+    return res;
+  };
+
+  const fetchIdentifyEyeHistory = async (pageRequest: PageRequest) => {
+    const res: PageResponse<EyeIdentificationResponse> = await $fetch(
+      `${apiUrl}/api/v1/identify/history`,
+      {
+        method: "GET",
+        query: pageRequest,
       },
     );
 
@@ -112,10 +126,19 @@ export function useIdentify() {
       enabled: !!identityEyeSuggestionRequest,
     });
 
+  const identifyEyeHistoryQuery = (pageRequest: PageRequest) =>
+    useQuery({
+      queryKey: ["identifyEyeHistory", pageRequest],
+      queryFn: () => fetchIdentifyEyeHistory(pageRequest),
+      enabled: !!pageRequest,
+    });
+
   return {
     identifyEyeMutation,
     identifyEyeDetailQuery,
     identifyEyeImageQuery,
     identityEyeSuggestionQuery,
+    identifyEyeHistoryQuery,
+    fetchIdentifyEyeHistory,
   };
 }
