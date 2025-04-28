@@ -1,99 +1,110 @@
 <template>
-  <div>
-    <div class="container mx-auto p-4">
-      <h1 class="text-2xl font-bold mb-4">历史记录</h1>
-      <div v-if="historyLoading" class="text-center">
-        <p>加载中...</p>
-      </div>
-      <div v-else-if="historyData">
-        <!-- 历史记录表格 -->
-        <div class="overflow-x-auto">
-          <table class="min-w-full bg-white rounded-lg overflow-hidden">
-            <thead class="bg-gray-100">
-              <tr>
-                <th class="px-4 py-2 text-left">ID</th>
-                <th class="px-4 py-2 text-left">时间</th>
-                <th class="px-4 py-2 text-left">结果</th>
-                <th class="px-4 py-2 text-left">操作</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="item in historyData.items"
-                :key="item.id"
-                class="border-b hover:bg-gray-50"
+  <div
+    class="container mx-auto p-4 h-full flex justify-center items-center flex-col"
+  >
+    <div v-if="historyLoading" class="text-center size-full">
+      <p>加载中...</p>
+    </div>
+    <div
+      v-else-if="historyData && historyData.items.length > 0"
+      class="size-full"
+    >
+      <!-- 历史记录表格 -->
+      <Table>
+        <TableCaption>最近的眼疾识别记录</TableCaption>
+        <TableHeader>
+          <TableRow>
+            <TableHead class="min-w-32 text-center">编号</TableHead>
+            <TableHead class="min-w-32 text-center">时间</TableHead>
+            <TableHead class="min-w-32 text-center">照片</TableHead>
+            <TableHead class="min-w-32 text-center">操作</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          <TableRow v-for="item in historyData.items" :key="item.id">
+            <TableCell class="text-center">{{ item.id }} </TableCell>
+            <TableCell class="text-center">{{
+              formatDate(item.created_at)
+            }}</TableCell>
+            <TableCell class="text-center flex justify-center items-center">
+              <div v-if="imageUrls[item.id]" class="size-16 overflow-hidden">
+                <img
+                  :src="imageUrls[item.id]"
+                  class="size-full"
+                  alt="眼部图像"
+                />
+              </div>
+              <div
+                v-else
+                class="w-16 h-16 flex items-center justify-center bg-gray-100"
               >
-                <td class="px-4 py-2">{{ item.id }}</td>
-                <td class="px-4 py-2">{{ item.created_at.getTime }}</td>
-                <td class="px-4 py-2">
-                  <span v-if="item.results" class="text-green-600">匹配</span>
-                  <span v-else class="text-red-600">不匹配</span>
-                </td>
-                <td class="px-4 py-2">
-                  <NuxtLink
-                    :to="`/detail/${item.id}`"
-                    class="text-blue-500 hover:underline"
-                    >查看详情</NuxtLink
-                  >
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+                <p class="text-xs text-gray-500">加载中...</p>
+              </div>
+            </TableCell>
+            <TableCell>
+              <Button
+                @click="handleShowDetail(item.id)"
+                class="mr-2 cursor-pointer"
+                >查看详细</Button
+              >
+              <Button @click="handleDelete(item.id)" class="cursor-pointer"
+                >删除记录</Button
+              >
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
 
-        <!-- 分页器 -->
-        <div class="mt-4">
-          <Pagination
-            :itemsPerPage="historyPage.limit"
-            :page="currentPage"
-            :total="historyData?.total || 0"
-            @update:page="handlePageChange"
-          >
-            <PaginationContent>
-              <PaginationFirst
-                :disabled="currentPage === 1"
-                @click="handlePageChange(1)"
-              />
-              <PaginationPrevious
-                :disabled="currentPage === 1"
-                @click="handlePageChange(currentPage - 1)"
-              />
+      <!-- 分页器 -->
+      <div class="mt-4">
+        <Pagination
+          :itemsPerPage="historyPage.limit"
+          :page="currentPage"
+          :total="historyData?.total || 0"
+          @update:page="handlePageChange"
+        >
+          <PaginationContent>
+            <PaginationPrevious
+              :disabled="currentPage === 1"
+              @click="handlePageChange(currentPage - 1)"
+            />
 
-              <template v-for="page in displayedPages" :key="page">
-                <PaginationItem
-                  v-if="page !== '...'"
-                  :value="page === '...' ? 0 : Number(page)"
-                  class="overflow-hidden"
+            <template v-for="page in displayedPages" :key="page">
+              <PaginationItem
+                v-if="page !== '...'"
+                :value="page === '...' ? 0 : Number(page)"
+                class="overflow-hidden"
+              >
+                <Button
+                  @click="handlePageChange(Number(page))"
+                  class="size-9"
+                  :variant="
+                    currentPage === Number(page) ? 'default' : 'outline'
+                  "
                 >
-                  <Button
-                    @click="handlePageChange(Number(page))"
-                    class="size-9"
-                    :variant="
-                      currentPage === Number(page) ? 'default' : 'outline'
-                    "
-                  >
-                    {{ page }}
-                  </Button>
-                </PaginationItem>
-                <PaginationEllipsis v-else :key="page"></PaginationEllipsis>
-              </template>
+                  {{ page }}
+                </Button>
+              </PaginationItem>
+              <PaginationEllipsis v-else :key="page"></PaginationEllipsis>
+            </template>
 
-              <PaginationNext
-                :disabled="currentPage === totalPages"
-                @click="handlePageChange(currentPage + 1)"
-              />
-              <PaginationLast
-                :disabled="currentPage === totalPages"
-                @click="handlePageChange(totalPages)"
-              />
-            </PaginationContent>
-          </Pagination>
-        </div>
-      </div>
-      <div v-else class="text-center py-10">
-        <p>暂无历史记录</p>
+            <PaginationNext
+              :disabled="currentPage === totalPages"
+              @click="handlePageChange(currentPage + 1)"
+            />
+          </PaginationContent>
+        </Pagination>
       </div>
     </div>
+    <div v-else class="text-center py-10">
+      <p>暂无历史记录</p>
+    </div>
+    <IdentifyDetailsDialog
+      v-if="identification_open && identification_id"
+      v-model:open="identification_open"
+      :identification_id="identification_id"
+      :key="identification_id"
+    />
   </div>
 </template>
 
@@ -102,13 +113,19 @@ import {
   Pagination,
   PaginationContent,
   PaginationEllipsis,
-  PaginationFirst,
   PaginationItem,
-  PaginationLast,
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { useQuery, keepPreviousData } from "@tanstack/vue-query";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { useIdentify } from "~/api/useIdentify";
 import type { PageRequest } from "~/types/DTO/PageRequest";
 import { Order } from "~/types/Order";
@@ -117,6 +134,11 @@ definePageMeta({
   requiresAuth: true,
 });
 
+const identification_open = ref(false);
+const identification_id = ref<number | null>(null);
+// 存储图片blob URLs的对象
+const imageUrls = ref<Record<string, string>>({});
+
 // 分页参数
 const historyPage: Ref<PageRequest> = ref({
   skip: 0,
@@ -124,11 +146,47 @@ const historyPage: Ref<PageRequest> = ref({
   order: Order.Desc,
 });
 
-const { fetchIdentifyEyeHistory } = useIdentify();
-const { data: historyData, isLoading: historyLoading } = useQuery({
-  queryKey: ["history", historyPage.value],
-  queryFn: () => fetchIdentifyEyeHistory(historyPage.value),
-  placeholderData: keepPreviousData,
+const { deleteEyeHistoryMutation, identifyEyeHistoryQuery } = useIdentify();
+const { data: historyData, isLoading: historyLoading } =
+  identifyEyeHistoryQuery(historyPage);
+
+// 监听historyData变化，加载图片
+watch(
+  () => historyData.value?.items,
+  async (items) => {
+    if (items && items.length > 0) {
+      for (const item of items) {
+        await loadImage(String(item.id), item.image_url);
+      }
+    }
+  },
+  { immediate: true },
+);
+
+// 加载图片并创建Blob URL
+const loadImage = async (id: string, imageUrl: string) => {
+  if (!imageUrl) return;
+
+  try {
+    const config = useRuntimeConfig();
+    const fullUrl = `${config.public.apiUrl}${imageUrl}`;
+
+    const res: Blob = await $fetch(fullUrl, {
+      method: "GET",
+    });
+
+    const blobUrl = URL.createObjectURL(res);
+    imageUrls.value[id] = blobUrl;
+  } catch (e) {
+    console.error("处理图片时出错:", e);
+  }
+};
+
+// 组件卸载时清理Blob URLs
+onBeforeUnmount(() => {
+  Object.values(imageUrls.value).forEach((url) => {
+    URL.revokeObjectURL(url);
+  });
 });
 
 // 分页计算
@@ -191,5 +249,25 @@ const handlePageChange = (page: number) => {
     ...historyPage.value,
     skip: (page - 1) * historyPage.value.limit,
   };
+};
+
+const formatDate = (dateString: string | Date) => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString("zh-CN", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
+
+const handleShowDetail = (new_identification_id: number) => {
+  identification_id.value = new_identification_id;
+  identification_open.value = true;
+};
+
+const handleDelete = async (id: number) => {
+  await deleteEyeHistoryMutation.mutateAsync(id);
 };
 </script>

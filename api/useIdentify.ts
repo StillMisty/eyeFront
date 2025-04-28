@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/vue-query";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/vue-query";
 import { toast } from "vue-sonner";
 import type { EyeIdentificationResponse } from "~/types/DTO/EyeIdentificationResponse";
 import type { EyeIdentificationSuggestionResponse } from "~/types/DTO/EyeIdentificationSuggestionResponse";
@@ -73,6 +78,17 @@ export function useIdentify() {
     return res;
   };
 
+  const deleteEyeHistory = async (identification_id: number) => {
+    const res = await $fetch(
+      `${apiUrl}/api/v1/identify/history/${identification_id}`,
+      {
+        method: "DELETE",
+      },
+    );
+
+    return res;
+  };
+
   /**
    * 识别眼部
    */
@@ -126,12 +142,26 @@ export function useIdentify() {
       enabled: !!identityEyeSuggestionRequest,
     });
 
-  const identifyEyeHistoryQuery = (pageRequest: PageRequest) =>
+  const identifyEyeHistoryQuery = (pageRequest: Ref<PageRequest>) =>
     useQuery({
       queryKey: ["identifyEyeHistory", pageRequest],
-      queryFn: () => fetchIdentifyEyeHistory(pageRequest),
+      queryFn: () => fetchIdentifyEyeHistory(pageRequest.value),
       enabled: !!pageRequest,
+      placeholderData: keepPreviousData,
     });
+
+  const deleteEyeHistoryMutation = useMutation({
+    mutationFn: deleteEyeHistory,
+    onSuccess: () => {
+      toast.success("删除成功");
+      queryClient.invalidateQueries({
+        queryKey: ["identifyEyeHistory"],
+      });
+    },
+    onError: (error) => {
+      toast.error("删除失败：" + error.message);
+    },
+  });
 
   return {
     identifyEyeMutation,
@@ -139,6 +169,6 @@ export function useIdentify() {
     identifyEyeImageQuery,
     identityEyeSuggestionQuery,
     identifyEyeHistoryQuery,
-    fetchIdentifyEyeHistory,
+    deleteEyeHistoryMutation,
   };
 }
