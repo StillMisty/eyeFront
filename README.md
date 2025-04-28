@@ -7,7 +7,7 @@
 ## 技术栈
 
 - **框架**: Nuxt.js
-- **UI组件库**: 自定义UI组件库，基于Tailwind CSS实现
+- **UI组件库**: 无头组件库，shadcn/vue
 - **状态管理**: Vue Query
 - **样式**: Tailwind CSS
 - **API通信**: 基于Nuxt的fetch系统
