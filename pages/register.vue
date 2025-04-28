@@ -55,9 +55,6 @@
             :max="maxDateStr"
             class="w-full"
           />
-          <p v-if="dateError" class="text-xs text-red-500 mt-1">
-            {{ dateError }}
-          </p>
         </div>
 
         <div class="space-y-2">
@@ -122,6 +119,7 @@
 </template>
 
 <script lang="ts" setup>
+import { toast } from "vue-sonner";
 import { useAuth } from "~/api/useAuth";
 import type { RegisterDTO } from "~/types/DTO/RegisterDTO";
 import { Gender } from "~/types/Gender";
@@ -143,7 +141,6 @@ const registerDTO = reactive<RegisterDTO>({
 // 日期验证相关
 const today = new Date();
 const maxDateStr = ref(today.toISOString().split("T")[0]);
-const dateError = ref("");
 
 // 用于日期输入
 const birthDateStr = ref(today.toISOString().split("T")[0]);
@@ -151,10 +148,8 @@ watch(birthDateStr, (newValue) => {
   if (newValue) {
     const selectedDate = new Date(newValue);
     if (selectedDate > today) {
-      dateError.value = "出生日期不能超过当前日期";
       return;
     }
-    dateError.value = "";
     registerDTO.birth_date = selectedDate;
   }
 });
@@ -162,7 +157,20 @@ watch(birthDateStr, (newValue) => {
 const register = async () => {
   // 验证出生日期
   if (registerDTO.birth_date > today) {
-    dateError.value = "出生日期不能超过当前日期";
+    return;
+  }
+
+  if (registerDTO.account === "" || registerDTO.password === "") {
+    return;
+  }
+
+  if (registerDTO.account.length < 6) {
+    toast.error("账号长度至少为6位");
+    return;
+  }
+
+  if (registerDTO.password.length < 6) {
+    toast.error("账号长度至少为6位");
     return;
   }
 

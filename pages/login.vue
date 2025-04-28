@@ -90,6 +90,7 @@
 </template>
 
 <script lang="ts" setup>
+import { toast } from "vue-sonner";
 import { useAuth } from "~/api/useAuth";
 import type { LoginDTO } from "~/types/DTO/LoginDTO";
 
@@ -107,11 +108,22 @@ const loginDTO: LoginDTO = {
 };
 
 const login = async () => {
-  try {
-    await loginMutation.mutateAsync(loginDTO);
-    router.push((route.query.redirect as string) || "/");
-  } catch (error) {
-    // 登录失败时的错误处理已在useAuth中配置
+  if (!loginDTO.account || !loginDTO.password) {
+    toast.error("请输入账号和密码");
+    return;
   }
+
+  if (loginDTO.account.length < 6) {
+    toast.error("账号长度至少为6位");
+    return;
+  }
+
+  if (loginDTO.password.length < 6) {
+    toast.error("密码长度至少为6位");
+    return;
+  }
+
+  await loginMutation.mutateAsync(loginDTO);
+  router.push((route.query.redirect as string) || "/");
 };
 </script>

@@ -1,4 +1,5 @@
 import { useMutation } from "@tanstack/vue-query";
+import { toast } from "vue-sonner";
 import type { LoginDTO } from "~/types/DTO/LoginDTO";
 import type { RegisterDTO } from "~/types/DTO/RegisterDTO";
 import type { TokenDTO } from "~/types/DTO/TokenDTO";
@@ -55,25 +56,17 @@ export function useAuth() {
 
   const registerMutation = useMutation({
     mutationFn: register,
-    onSuccess: (data) => {
-      // 注册成功后可以执行一些操作，比如跳转到登录页
-      console.log("Registration successful:", data);
-    },
+    onSuccess: (data) => {},
     onError: (error) => {
-      // 处理注册错误
-      console.error("Registration error:", error);
+      toast.error("注册失败：" + error.message);
     },
   });
 
   const loginMutation = useMutation({
     mutationFn: login,
-    onSuccess: (data) => {
-      // 登录成功后可以执行一些操作，比如跳转到首页
-      console.log("Login successful:", data);
-    },
+    onSuccess: (data) => {},
     onError: (error) => {
-      // 处理登录错误
-      console.error("Login error:", error);
+      toast.error("登录失败：" + "账号或密码错误，请重试！");
     },
   });
 
