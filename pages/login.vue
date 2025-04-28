@@ -98,6 +98,7 @@ definePageMeta({
 });
 
 const { loginMutation } = useAuth();
+const route = useRoute();
 const router = useRouter();
 
 const loginDTO: LoginDTO = {
@@ -108,7 +109,7 @@ const loginDTO: LoginDTO = {
 const login = async () => {
   try {
     await loginMutation.mutateAsync(loginDTO);
-    router.push("/");
+    router.push((route.query.redirect as string) || "/");
   } catch (error) {
     // 登录失败时的错误处理已在useAuth中配置
   }
