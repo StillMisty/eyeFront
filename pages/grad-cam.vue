@@ -5,7 +5,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
       <!-- 图片上传区域 -->
       <div
-        class="border border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center"
+        class="border border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center gap-4"
       >
         <Input
           type="file"
@@ -45,7 +45,7 @@
         <h2 class="text-xl font-semibold mb-4">Grad-CAM结果</h2>
 
         <div v-if="isGenerating" class="flex items-center justify-center h-64">
-          <div class="flex flex-col items-center">
+          <div class="flex flex-col items-center gap-4">
             <LoaderCircle class="animate-spin" :size="48" />
             <p>正在生成Grad-CAM热力图...</p>
           </div>
