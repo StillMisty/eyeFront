@@ -45,7 +45,7 @@
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <CircleHelp
-                      class="h-4 w-4 text-gray-400 hover:text-gray-600 transition-colors"
+                      class="size-4 text-gray-400 hover:text-gray-600 transition-colors"
                     />
                   </TooltipTrigger>
                   <TooltipContent
