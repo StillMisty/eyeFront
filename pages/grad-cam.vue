@@ -46,7 +46,7 @@
 
         <div v-if="isGenerating" class="flex items-center justify-center h-64">
           <div class="flex flex-col items-center">
-            <div class="spinner mb-4"></div>
+            <LoaderCircle class="animate-spin" :size="48" />
             <p>正在生成Grad-CAM热力图...</p>
           </div>
         </div>
@@ -80,6 +80,7 @@
 </template>
 
 <script lang="ts" setup>
+import { LoaderCircle } from "lucide-vue-next";
 import { ref } from "vue";
 import { toast } from "vue-sonner";
 import { useIdentify } from "~/api/useIdentify";
@@ -148,23 +149,3 @@ const downloadGradCam = () => {
   }
 };
 </script>
-
-<style scoped>
-.spinner {
-  border: 4px solid rgba(0, 0, 0, 0.1);
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border-left-color: #09f;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-</style>
