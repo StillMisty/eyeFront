@@ -9,8 +9,11 @@ export default defineNuxtConfig({
       apiUrl: process.env.API_URL || "http://127.0.0.1:8000",
     },
   },
+  app: {
+    pageTransition: { name: "page", mode: "out-in" },
+  },
   css: ["~/assets/css/tailwind.css"],
-  modules: ["shadcn-nuxt", "@nuxt/eslint"],
+  modules: ["shadcn-nuxt", "@nuxt/eslint", "@pinia/nuxt"],
   shadcn: {
     /**
      * Prefix for all the imported component

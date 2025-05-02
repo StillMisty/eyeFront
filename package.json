@@ -11,8 +11,9 @@
   },
   "dependencies": {
     "@nuxtjs/eslint-module": "^4.1.0",
+    "@pinia/nuxt": "^0.11.0",
     "@tailwindcss/vite": "^4.1.5",
-    "@tanstack/vue-query": "^5.74.9",
+    "@tanstack/vue-query": "^5.75.0",
     "@tanstack/vue-table": "^8.21.3",
     "@vueuse/core": "^13.1.0",
     "class-variance-authority": "^0.7.1",

@@ -31,7 +31,20 @@
               for="picture"
               class="inline-flex text-primary cursor-pointer hover:underline"
             >
-              选择文件
+              <span>点击上传</span>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger><CircleHelp /></TooltipTrigger>
+                  <TooltipContent>
+                    <h1 class="text-center">示例图片</h1>
+                    <img
+                      src="~/assets/images/example.jpg"
+                      alt="眼睛图片示例"
+                      class="size-32"
+                    />
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </Label>
           </div>
           <p class="text-xs text-gray-500">支持 JPG, PNG 格式</p>
@@ -105,11 +118,15 @@
       :identification_id="identification_id"
       :key="identification_id"
     />
+    <NewUserDialog
+      v-if="newUser_open"
+      v-model:open="newUser_open"
+    ></NewUserDialog>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { X, CloudUpload } from "lucide-vue-next";
+import { X, CloudUpload, CircleHelp } from "lucide-vue-next";
 import { useIdentify } from "~/api/useIdentify";
 import { Progress } from "~/components/ui/progress";
 
@@ -139,6 +156,12 @@ const resultStatusClass = computed(() => {
   }
   return "";
 });
+
+const newUser_open = ref(false);
+const route = useRoute();
+if (route.query.new) {
+  newUser_open.value = true;
+}
 
 const { identifyEyeMutation } = useIdentify();
 

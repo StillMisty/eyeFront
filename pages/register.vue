@@ -176,7 +176,12 @@ const register = async () => {
 
   try {
     await registerMutation.mutateAsync(registerDTO);
-    router.push("/login");
+    router.push({
+      path: "/",
+      query: {
+        new: "true",
+      },
+    });
   } catch (error) {
     // 注册失败时的错误处理已在useAuth中配置
   }

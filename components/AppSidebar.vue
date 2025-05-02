@@ -12,6 +12,13 @@
             </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton as-child>
+                <NuxtLink to="/introduce">
+                  <NotebookPen /><span>疾病介绍</span>
+                </NuxtLink>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton as-child>
                 <NuxtLink to="/history">
                   <FileClock /><span>历史记录</span>
                 </NuxtLink>
@@ -61,7 +68,7 @@
 </template>
 
 <script setup lang="ts">
-import { Eye, FileClock, User, ChevronUp } from "lucide-vue-next";
+import { Eye, FileClock, User, ChevronUp, NotebookPen } from "lucide-vue-next";
 import { ref } from "vue";
 import { useAuth } from "~/api/useAuth";
 import { useMe } from "~/api/useMe";
