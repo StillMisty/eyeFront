@@ -206,7 +206,7 @@ const comments = computed(() => {
 
 const isFormValid = computed(() => {
   return (
-    newComment.value.rating > 0 && newComment.value.comment.trim().length > 0
+    newComment.value.rating > 0 && newComment.value.comment.trim().length >= 4
   );
 });
 

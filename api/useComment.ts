@@ -35,7 +35,6 @@ export function useComment() {
         body: comment,
       },
     );
-
     return res;
   };
 
@@ -56,7 +55,7 @@ export function useComment() {
       });
     },
     onError: () => {
-      toast.error("上传评论失败");
+      toast.error("上传评论失败: 评论无意义或内容不当");
     },
   });
 
