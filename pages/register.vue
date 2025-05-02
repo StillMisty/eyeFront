@@ -88,7 +88,7 @@
         </div>
 
         <Button
-          class="w-full"
+          class="w-full cursor-pointer"
           @click="register"
           :disabled="registerMutation.isPending.value"
         >
@@ -174,16 +174,12 @@ const register = async () => {
     return;
   }
 
-  try {
-    await registerMutation.mutateAsync(registerDTO);
-    router.push({
-      path: "/",
-      query: {
-        new: "true",
-      },
-    });
-  } catch (error) {
-    // 注册失败时的错误处理已在useAuth中配置
-  }
+  await registerMutation.mutateAsync(registerDTO);
+  router.push({
+    path: "/",
+    query: {
+      new: "true",
+    },
+  });
 };
 </script>

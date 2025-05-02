@@ -11,4 +11,7 @@ export interface DiseaseIntroduceResponse {
    * Name
    */
   name: string;
+  category: string;
+  updated_at: string;
+  id: number;
 }

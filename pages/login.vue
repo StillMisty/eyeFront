@@ -44,7 +44,7 @@
 
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <Checkbox id="remember-me" />
+            <Checkbox id="remember-me" class="cursor-pointer" />
             <Label for="remember-me">记住我</Label>
           </div>
 
@@ -59,7 +59,7 @@
         </div>
 
         <Button
-          class="w-full"
+          class="w-full cursor-pointer"
           @click="login"
           :disabled="loginMutation.isPending.value"
         >

@@ -1,67 +1,96 @@
 <template>
   <div
-    class="w-full h-full flex flex-col items-center justify-center p-6 bg-gray-50"
+    class="w-full h-full flex flex-col items-center justify-center p-6 bg-gradient-to-b from-blue-50 to-white"
   >
-    <div class="max-w-md w-full bg-white rounded-lg shadow-lg p-8 space-y-6">
+    <div
+      class="max-w-md w-full bg-white rounded-xl shadow-xl p-8 space-y-6 border border-gray-100"
+    >
       <div class="text-center">
-        <h1 class="text-2xl font-bold text-gray-800 mb-2">眼疾识别</h1>
-        <p class="text-gray-500 mb-6">上传眼睛图片进行分析</p>
+        <div
+          class="mb-4 inline-flex items-center justify-center p-2 bg-blue-50 rounded-full"
+        >
+          <Eye class="h-8 w-8 text-blue-500" />
+        </div>
+        <h1 class="text-2xl font-bold text-gray-800">眼疾识别</h1>
+        <p class="text-gray-500 mt-2">上传眼睛图片，AI 快速分析诊断</p>
       </div>
 
       <!-- 文件上传区域 -->
       <div
-        class="border-2 border-dashed rounded-lg p-6"
+        class="border-2 border-dashed rounded-xl transition-all duration-300"
         :class="[
           isDragging
-            ? 'border-primary bg-primary/5'
+            ? 'border-primary bg-primary/5 scale-[1.02]'
             : 'border-gray-300 hover:border-primary/50',
-          imagePreview ? 'border-primary' : '',
+          imagePreview ? 'border-primary bg-blue-50/30' : '',
         ]"
         @dragover.prevent="isDragging = true"
         @dragleave.prevent="isDragging = false"
         @drop.prevent="handleFileDrop"
       >
-        <div v-if="!imagePreview" class="text-center space-y-3">
+        <div v-if="!imagePreview" class="text-center space-y-4 py-8 px-4">
           <div class="flex justify-center">
-            <CloudUpload :size="64" />
+            <div class="p-3 rounded-full bg-blue-100 inline-flex">
+              <CloudUpload :size="40" class="text-blue-500" />
+            </div>
           </div>
-          <div class="text-gray-600 font-medium">
+          <div class="text-gray-700 space-y-1">
             <p>拖放图片到此处或</p>
             <Label
               for="picture"
-              class="inline-flex text-primary cursor-pointer hover:underline"
+              class="inline-flex items-center gap-1 text-primary cursor-pointer hover:underline font-medium"
             >
               <span>点击上传</span>
               <TooltipProvider>
                 <Tooltip>
-                  <TooltipTrigger><CircleHelp /></TooltipTrigger>
-                  <TooltipContent>
-                    <h1 class="text-center">示例图片</h1>
-                    <img
-                      src="~/assets/images/example.jpg"
-                      alt="眼睛图片示例"
-                      class="size-32"
+                  <TooltipTrigger asChild>
+                    <CircleHelp
+                      class="h-4 w-4 text-gray-400 hover:text-gray-600 transition-colors"
                     />
+                  </TooltipTrigger>
+                  <TooltipContent
+                    class="bg-white p-0 rounded-lg shadow-lg border-0"
+                  >
+                    <div class="p-3 space-y-2">
+                      <h3 class="text-sm font-medium text-gray-700 mb-1">
+                        示例图片
+                      </h3>
+                      <img
+                        src="~/assets/images/example.jpg"
+                        alt="眼睛图片示例"
+                        class="w-40 h-auto rounded-md border border-gray-200"
+                      />
+                      <p class="text-xs text-gray-500">
+                        请上传类似清晰的眼睛图像
+                      </p>
+                    </div>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
             </Label>
           </div>
-          <p class="text-xs text-gray-500">支持 JPG, PNG 格式</p>
+          <p class="text-xs text-gray-500">支持 JPG, PNG 格式，最大 10MB</p>
         </div>
 
-        <div v-else class="relative">
-          <img
-            :src="imagePreview"
-            class="w-full h-auto rounded-lg object-cover max-h-64"
-            alt="Eye image preview"
-          />
+        <div v-else class="relative p-3">
+          <div class="overflow-hidden rounded-lg">
+            <img
+              :src="imagePreview"
+              class="w-full h-auto object-cover max-h-64 transition-transform hover:scale-105 duration-500"
+              alt="Eye image preview"
+            />
+          </div>
           <Button
             @click="clearImage"
-            class="absolute top-2 right-2 bg-black/50 text-white cursor-pointer rounded-full p-1 hover:bg-black/70"
+            variant="destructive"
+            size="icon"
+            class="absolute top-6 right-6 rounded-full shadow-md cursor-pointer"
           >
-            <X />
+            <X class="h-4 w-4" />
           </Button>
+          <p class="text-xs text-gray-500 text-center mt-2">
+            已上传：{{ currentFileName }}
+          </p>
         </div>
 
         <Input
@@ -77,10 +106,10 @@
       <!-- 进度条 -->
       <div v-if="uploading" class="space-y-2">
         <div class="flex justify-between text-sm mb-1">
-          <span class="text-gray-700">处理进度</span>
+          <span class="text-gray-700">{{ progressStatus }}</span>
           <span class="text-primary font-medium">{{ progress }}%</span>
         </div>
-        <Progress v-model="progress" class="w-full h-2" />
+        <Progress v-model="progress" class="w-full h-3" />
       </div>
 
       <!-- 按钮 -->
@@ -89,29 +118,46 @@
           @click="handleIdentifyEye"
           :disabled="!hasFile || uploading"
           :class="{
-            'opacity-50 cursor-not-allowed': !hasFile || uploading,
+            'opacity-50': !hasFile || uploading,
           }"
+          size="lg"
+          class="px-6 font-medium cursor-pointer"
         >
-          <span v-if="uploading">处理中...</span>
-          <span v-else>开始识别</span>
+          <Loader2 v-if="uploading" class="mr-2 h-4 w-4 animate-spin" />
+          <ScanSearch v-else class="mr-2 h-4 w-4" />
+          <span>{{ uploading ? "处理中..." : "开始识别" }}</span>
         </Button>
         <Button
           v-if="identification_id"
           @click="handleShowResult"
-          class="cursor-pointer"
-          >查看结果</Button
+          variant="outline"
+          size="lg"
+          class="px-6 font-medium cursor-pointer"
         >
+          <ScanEye class="mr-2 size-4" />
+          查看结果
+        </Button>
       </div>
 
       <!-- 结果状态 -->
       <div
         v-if="resultStatus"
-        class="mt-4 p-3 rounded-md text-center"
+        class="mt-4 p-4 rounded-lg text-center flex items-center justify-center"
         :class="resultStatusClass"
       >
-        {{ resultMessage }}
+        <CheckCircle2 v-if="resultStatus === 'success'" class="mr-2 h-5 w-5" />
+        <AlertCircle
+          v-else-if="resultStatus === 'error'"
+          class="mr-2 h-5 w-5"
+        />
+        <span class="font-medium">{{ resultMessage }}</span>
       </div>
     </div>
+
+    <p class="text-gray-500 text-sm mt-6 max-w-md text-center">
+      本系统使用先进的人工智能技术识别常见眼部疾病，仅供参考，不能替代专业医生诊断。
+    </p>
+
     <IdentifyDetailsDialog
       v-if="identification_open && identification_id"
       v-model:open="identification_open"
@@ -126,7 +172,17 @@
 </template>
 
 <script lang="ts" setup>
-import { X, CloudUpload, CircleHelp } from "lucide-vue-next";
+import {
+  X,
+  CloudUpload,
+  CircleHelp,
+  Loader2,
+  CheckCircle2,
+  AlertCircle,
+  ScanSearch,
+  ScanEye,
+  Eye,
+} from "lucide-vue-next";
 import { useIdentify } from "~/api/useIdentify";
 import { Progress } from "~/components/ui/progress";
 
@@ -144,18 +200,33 @@ const resultStatus = ref<"success" | "error" | null>(null);
 const resultMessage = ref("");
 // 添加一个变量来存储当前选择的文件
 const currentFile = ref<File | null>(null);
+const currentFileName = computed(() => {
+  return currentFile.value?.name
+    ? currentFile.value.name.length > 25
+      ? currentFile.value.name.substring(0, 22) + "..."
+      : currentFile.value.name
+    : "未知文件";
+});
 // 当前页面识别后返回的识别ID
 const identification_id = ref<number | null>(null);
 // 识别结果详细信息是否显示
 const identification_open = ref(false);
 const resultStatusClass = computed(() => {
   if (resultStatus.value === "success") {
-    return "bg-green-50 text-green-700 border border-green-200";
+    return "bg-green-50 text-green-700 border border-green-100";
   } else if (resultStatus.value === "error") {
-    return "bg-red-50 text-red-700 border border-red-200";
+    return "bg-red-50 text-red-700 border border-red-100";
   }
   return "";
 });
+
+const progressStatus = ref("正在处理图像...");
+const progressMessages = [
+  "分析图像特征...",
+  "应用神经网络模型...",
+  "对比疾病数据库...",
+  "生成诊断结果...",
+];
 
 const newUser_open = ref(false);
 const route = useRoute();
@@ -190,6 +261,13 @@ const handleFiles = (files: FileList) => {
     return;
   }
 
+  // 检查文件大小（10MB 限制）
+  if (file.size > 10 * 1024 * 1024) {
+    resultStatus.value = "error";
+    resultMessage.value = "图片大小不能超过 10MB";
+    return;
+  }
+
   // 保存文件对象
   currentFile.value = file;
 
@@ -220,10 +298,21 @@ const handleIdentifyEye = async () => {
   progress.value = 0;
   resultStatus.value = null;
 
-  // 模拟进度更新
+  // 模拟进度更新及处理状态变化
   const progressInterval = setInterval(() => {
     if (progress.value < 90) {
-      progress.value += Math.floor(Math.random() * 10) + 1;
+      progress.value += Math.floor(Math.random() * 8) + 3;
+
+      // 根据处理进度更新状态信息
+      if (progress.value < 30) {
+        progressStatus.value = progressMessages[0];
+      } else if (progress.value < 60) {
+        progressStatus.value = progressMessages[1];
+      } else if (progress.value < 85) {
+        progressStatus.value = progressMessages[2];
+      } else {
+        progressStatus.value = progressMessages[3];
+      }
     }
   }, 300);
 
@@ -238,16 +327,19 @@ const handleIdentifyEye = async () => {
     const response = await identifyEyeMutation.mutateAsync(formData);
     clearInterval(progressInterval);
     progress.value = 100;
+    progressStatus.value = "分析完成!";
 
     // 显示成功消息
     resultStatus.value = "success";
-    resultMessage.value = "眼睛识别成功！";
+    resultMessage.value = "眼睛识别成功！点击查看详细分析结果";
 
     // 将识别ID存储到变量中
     identification_id.value = response.id;
 
     // 打开识别结果详情对话框
-    identification_open.value = true;
+    setTimeout(() => {
+      identification_open.value = true;
+    }, 500);
   } catch (error) {
     clearInterval(progressInterval);
     console.error("Error during upload:", error);

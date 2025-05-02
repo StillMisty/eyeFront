@@ -67,7 +67,7 @@ export function useIdentify() {
   };
 
   const fetchIdentifyEyeHistory = async (pageRequest: PageRequest) => {
-    const res: PageResponse<EyeIdentificationResponse> = await $fetch(
+    const res: PageResponse<EyeIdentificationResponse[]> = await $fetch(
       `${apiUrl}/api/v1/identify/history`,
       {
         method: "GET",
