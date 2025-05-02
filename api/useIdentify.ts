@@ -89,6 +89,16 @@ export function useIdentify() {
     return res;
   };
 
+  const generateGridCam = async (file: FormData) => {
+    const res: Blob = await $fetch(`${apiUrl}/api/v1/identify/gradcam`, {
+      method: "POST",
+      body: file,
+      responseType: "blob",
+    });
+
+    return res;
+  };
+
   /**
    * 识别眼部
    */
@@ -164,6 +174,16 @@ export function useIdentify() {
     },
   });
 
+  /**
+   * 生成眼部识别的Grad-CAM
+   */
+  const generateGridCamMutation = useMutation({
+    mutationFn: generateGridCam,
+    onError: (error) => {
+      toast.error("生成Grad-CAM失败：" + error.message);
+    },
+  });
+
   return {
     identifyEyeMutation,
     identifyEyeDetailQuery,
@@ -172,5 +192,6 @@ export function useIdentify() {
     identifyEyeHistoryQuery,
     postIdentityEyeSuggestion,
     deleteEyeHistoryMutation,
+    generateGridCamMutation,
   };
 }

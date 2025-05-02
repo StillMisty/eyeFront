@@ -64,7 +64,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useQuery } from "@tanstack/vue-query";
 import { Loader } from "lucide-vue-next";
 import MarkdownIt from "markdown-it";
 import { useIdentify } from "~/api/useIdentify";
