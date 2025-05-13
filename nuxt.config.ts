@@ -4,6 +4,9 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",
   devtools: { enabled: true },
+  build: {
+    transpile: ["vue"], // 添加 vue 到 transpile 列表
+  },
   runtimeConfig: {
     public: {
       apiUrl: process.env.API_URL || "http://127.0.0.1:8000",
