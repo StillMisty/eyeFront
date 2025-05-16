@@ -59,7 +59,7 @@
           <PaginationContent>
             <PaginationPrevious
               :disabled="currentPage === 1"
-              @click="handlePageChange(currentPage - 1)"
+              class="cursor-pointer"
             />
 
             <template v-for="page in displayedPages" :key="page">
@@ -69,8 +69,7 @@
                 class="overflow-hidden"
               >
                 <Button
-                  @click="handlePageChange(Number(page))"
-                  class="size-9"
+                  class="size-9 cursor-pointer"
                   :variant="
                     currentPage === Number(page) ? 'default' : 'outline'
                   "
@@ -83,7 +82,7 @@
 
             <PaginationNext
               :disabled="currentPage === totalPages"
-              @click="handlePageChange(currentPage + 1)"
+              class="cursor-pointer"
             />
           </PaginationContent>
         </Pagination>
@@ -200,10 +199,14 @@ const displayedPages = computed(() => {
 
 // 处理页码变化
 const handlePageChange = (page: number) => {
+  // page = Math.max(1, Math.min(page, totalPages.value));
   historyPage.value = {
     ...historyPage.value,
     skip: (page - 1) * historyPage.value.limit,
   };
+  console.log("page", page);
+  console.log("historyPage", historyPage.value);
+  console.log("currentPage", currentPage.value);
 };
 
 const formatDate = (dateString: string | Date) => {
