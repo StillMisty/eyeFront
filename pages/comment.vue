@@ -166,15 +166,7 @@
 
 <script setup lang="ts">
 import { Textarea } from "@/components/ui/textarea";
-import {
-  RefreshCw,
-  Loader,
-  MessageSquareOff,
-  Star,
-  MessageSquarePlus,
-} from "lucide-vue-next";
-import { ref, computed, onMounted } from "vue";
-import { toast } from "vue-sonner";
+import { MessageSquareOff, Star, MessageSquarePlus } from "lucide-vue-next";
 import { useComment } from "~/api/useComment";
 import { Order } from "~/types/Order";
 

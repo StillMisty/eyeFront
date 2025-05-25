@@ -77,11 +77,7 @@ const { identification_id, open } = defineProps<{
 }>();
 const emit = defineEmits(["update:open"]);
 
-const {
-  identifyEyeDetailQuery,
-  identityEyeSuggestionQuery,
-  postIdentityEyeSuggestion,
-} = useIdentify();
+const { identifyEyeDetailQuery, identityEyeSuggestionQuery } = useIdentify();
 
 const { meQuery } = useMe();
 

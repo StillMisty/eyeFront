@@ -129,8 +129,6 @@ definePageMeta({
 
 const identification_open = ref(false);
 const identification_id = ref<number | null>(null);
-// 存储图片blob URLs的对象
-const imageUrls = ref<Record<string, string>>({});
 
 // 分页参数
 const historyPage: Ref<PageRequest> = ref({

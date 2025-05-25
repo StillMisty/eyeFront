@@ -13,5 +13,5 @@ import { useIntroduce } from "~/api/useIntroduce.ts";
 
 const { DiseaseIntroduceQuery } = useIntroduce();
 
-const { data, isLoading, error } = DiseaseIntroduceQuery;
+const { data } = DiseaseIntroduceQuery;
 </script>

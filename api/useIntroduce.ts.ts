@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from "@tanstack/vue-query";
+import { useQuery } from "@tanstack/vue-query";
 import type { DiseaseIntroduceResponse } from "~/types/DTO/DiseaseIntroduceResponse";
 
 export function useIntroduce() {

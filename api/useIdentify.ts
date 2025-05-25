@@ -141,15 +141,18 @@ export function useIdentify() {
    * 获取眼部识别建议
    */
   const identityEyeSuggestionQuery = (
-    identityEyeSuggestionRequest: Ref<IdentityEyeSuggestionRequest>,
+    identityEyeSuggestionRequest: Ref<IdentityEyeSuggestionRequest | undefined>,
     enabled: ComputedRef<boolean> = computed(
       () => !!identityEyeSuggestionRequest.value,
     ),
   ) =>
     useQuery({
       queryKey: ["identityEyeSuggestion", identityEyeSuggestionRequest],
-      queryFn: () =>
-        postIdentityEyeSuggestion(identityEyeSuggestionRequest.value),
+      queryFn: () => {
+        return postIdentityEyeSuggestion(
+          identityEyeSuggestionRequest.value as IdentityEyeSuggestionRequest,
+        );
+      },
       enabled,
     });
 

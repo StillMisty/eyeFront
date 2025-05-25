@@ -178,7 +178,6 @@ import {
 } from "lucide-vue-next";
 import { useRoute } from "vue-router";
 import { useAuth } from "~/api/useAuth";
-import { useComment } from "~/api/useComment";
 import { useMe } from "~/api/useMe";
 import MeInfoUpdateDialog from "~/components/MeInfoUpdateDialog.vue";
 import DropdownMenu from "~/components/ui/dropdown-menu/DropdownMenu.vue";
