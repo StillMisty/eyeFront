@@ -12,9 +12,6 @@ export default defineNuxtConfig({
       apiUrl: process.env.API_URL || "http://127.0.0.1:8000",
     },
   },
-  build: {
-    transpile: ["vue"], // 添加 vue 到 transpile 列表
-  },
   app: {
     pageTransition: { name: "page", mode: "out-in" },
   },
