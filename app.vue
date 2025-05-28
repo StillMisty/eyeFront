@@ -1,15 +1,12 @@
 <template>
+  <Toaster richColors />
   <NuxtLayout>
     <NuxtPage />
   </NuxtLayout>
-
-  <ClientOnly>
-    <Toaster richColors />
-  </ClientOnly>
 </template>
 
 <script setup lang="ts">
-import { Toaster } from "vue-sonner";
+import { Toaster } from "@/components/ui/sonner";
 </script>
 
 <style scoped>
