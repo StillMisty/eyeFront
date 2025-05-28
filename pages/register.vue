@@ -170,7 +170,7 @@ const register = async () => {
   }
 
   if (registerDTO.password.length < 6) {
-    toast.error("账号长度至少为6位");
+    toast.error("密码长度至少为6位");
     return;
   }
 

@@ -1,5 +1,6 @@
 import { useMutation } from "@tanstack/vue-query";
 import { toast } from "vue-sonner";
+import type { ApiError } from "~/types/DTO/ApiError";
 import type { LoginDTO } from "~/types/DTO/LoginDTO";
 import type { RegisterDTO } from "~/types/DTO/RegisterDTO";
 import type { TokenDTO } from "~/types/DTO/TokenDTO";
@@ -56,17 +57,15 @@ export function useAuth() {
 
   const registerMutation = useMutation({
     mutationFn: register,
-    onSuccess: (data) => {},
-    onError: (error) => {
-      toast.error("注册失败：" + error.message);
+    onError: (error: ApiError) => {
+      toast.error("注册失败：" + error?.data?.detail || "请稍后再试！");
     },
   });
 
   const loginMutation = useMutation({
     mutationFn: login,
-    onSuccess: (data) => {},
-    onError: (error) => {
-      toast.error("登录失败：" + "账号或密码错误，请重试！");
+    onError: (error: ApiError) => {
+      toast.error("登录失败：" + error?.data?.detail || "请稍后再试！");
     },
   });
 

@@ -5,6 +5,7 @@ import {
   useQueryClient,
 } from "@tanstack/vue-query";
 import { toast } from "vue-sonner";
+import type { ApiError } from "~/types/DTO/ApiError";
 import type { EyeIdentificationResponse } from "~/types/DTO/EyeIdentificationResponse";
 import type { EyeIdentificationSuggestionResponse } from "~/types/DTO/EyeIdentificationSuggestionResponse";
 import type { IdentityEyeSuggestionRequest } from "~/types/DTO/IdentityEyeSuggestionRequest";
@@ -160,7 +161,7 @@ export function useIdentify() {
     useQuery({
       queryKey: ["identifyEyeHistory", pageRequest],
       queryFn: () => fetchIdentifyEyeHistory(pageRequest.value),
-      enabled: !!pageRequest,
+      enabled: computed(() => !!pageRequest.value),
       placeholderData: keepPreviousData,
     });
 
@@ -172,8 +173,10 @@ export function useIdentify() {
         queryKey: ["identifyEyeHistory"],
       });
     },
-    onError: (error) => {
-      toast.error("删除失败：" + error.message);
+    onError: (error: ApiError) => {
+      toast.error(
+        "删除失败：" + error.data?.detail || error.message || "请稍后再试！",
+      );
     },
   });
 
@@ -182,8 +185,12 @@ export function useIdentify() {
    */
   const generateGridCamMutation = useMutation({
     mutationFn: generateGridCam,
-    onError: (error) => {
-      toast.error("生成Grad-CAM失败：" + error.message);
+    onError: (error: ApiError) => {
+      toast.error(
+        "生成Grad-CAM失败：" + error.data?.detail ||
+          error.message ||
+          "请稍后再试！",
+      );
     },
   });
 

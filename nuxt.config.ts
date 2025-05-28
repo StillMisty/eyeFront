@@ -15,7 +15,7 @@ export default defineNuxtConfig({
   app: {
     pageTransition: { name: "page", mode: "out-in" },
   },
-  css: ["~/assets/css/tailwind.css"],
+  css: ["~/assets/css/tailwind.css", "vue-sonner/style.css"],
   modules: ["shadcn-nuxt", "@nuxt/eslint", "@pinia/nuxt"],
   shadcn: {
     /**

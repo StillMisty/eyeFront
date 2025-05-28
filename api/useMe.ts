@@ -33,7 +33,7 @@ export function useMe() {
       queryClient.invalidateQueries({
         queryKey: ["me"],
       });
-      toast("个人信息修改成功");
+      toast.success("个人信息修改成功");
     },
   });
 

@@ -5,6 +5,7 @@ import {
   useQueryClient,
 } from "@tanstack/vue-query";
 import { toast } from "vue-sonner";
+import type { ApiError } from "~/types/DTO/ApiError";
 import type { CommentRequest } from "~/types/DTO/CommentRequest";
 import type { CommentResponse } from "~/types/DTO/CommentResponse";
 import type { PageRequest } from "~/types/DTO/PageRequest";
@@ -54,8 +55,10 @@ export function useComment() {
         queryKey: ["comments"],
       });
     },
-    onError: () => {
-      toast.error("上传评论失败: 评论无意义或内容不当");
+    onError: (error: ApiError) => {
+      toast.error(
+        "上传评论失败: " + error.data?.detail || error.message || "未知错误",
+      );
     },
   });
 

@@ -1,16 +1,16 @@
-<script setup lang="ts">
-import { Toaster } from "@/components/ui/sonner";
-</script>
-
 <template>
   <NuxtLayout>
     <NuxtPage />
   </NuxtLayout>
 
   <ClientOnly>
-    <Toaster />
+    <Toaster richColors />
   </ClientOnly>
 </template>
+
+<script setup lang="ts">
+import { Toaster } from "vue-sonner";
+</script>
 
 <style scoped>
 .page-enter-active,
